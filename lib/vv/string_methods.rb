@@ -22,35 +22,55 @@ module VV
       end
 
       def forward_slash
-        '/'
+        "/"
       end
 
       def dash
-        '-'
+        "-"
       end
 
       def period
-        '.'
+        "."
       end
 
       def underscore_character
-        '_'
+        "_"
+      end
+
+      # See: `safe_filename?` and `safe_path?` methods
+      def safe_filename_characters
+        numbers    = '0-9'
+        lowercase  = 'a-z'
+        uppercase  = 'A-Z'
+
+        [ dash,
+          numbers,
+          lowercase,
+          uppercase,
+          underscore_character,
+          period ].join
       end
 
     end
 
-    def starts_with? *args, **kwargs
-      self.start_with?(*args, **kwargs)
+    def blank?
+      self == ""
     end
 
-    def ends_with? *args, **kwargs
-      self.end_with?(*args, **kwargs)
+    def starts_with? *args
+      self.start_with?(*args)
+    end
+
+    def ends_with? *args
+      self.end_with?(*args)
     end
 
     def after(string, safe: true)
       if safe && ! self.starts_with?(string)
         message = "String does not start with #{string}"
         raise RuntimeError, message
+      elsif not self.starts_with?(string)
+        return self
       end
 
       self[string.size..-1]
@@ -58,6 +78,17 @@ module VV
 
     def with_ending(string)
       self.chomp(string) + string
+    end
+
+    def squish!
+      self.gsub!(/\A[[:space:]]+/, "")
+      self.gsub!(/[[:space:]]+\z/, "")
+      self.gsub!(/[[:space:]]+/, " ")
+      self
+    end
+
+    def squish
+      self.dup.squish!
     end
 
     def format!(other)
@@ -85,26 +116,33 @@ module VV
     end
 
     def to_regex
-      regex_string = '[^' + self + ']'
-      Regexp.new(regex_string)
+      Regexp.new self
     end
 
     def to_regexp *args, **kwargs
       self.to_regex(*args, **kwargs)
     end
 
-    # See: `safe_filename?` and `safe_path?` methods
-    def safe_filename_characters
-      numbers    = '0-9'
-      lowercase  = 'a-z'
-      uppercase  = 'A-Z'
+    def to_regex_filter
+      regex_string = '[^' + self + ']'
+      regex_string.to_regex
+    end
 
-      [ dash,
-        numbers,
-        lowercase,
-        uppercase,
-        underscore_character,
-        period ].join
+    def to_regexp_filter
+      self.to_regex_filter
+    end
+
+    def safe_filename?
+      unsafe   = self.blank?
+      unsafe ||= self.starts_with? period
+      unsafe ||= self.starts_with? dash
+
+      unsafe ||= self.end_with? period
+      unsafe ||= self.end_with? dash
+
+      unsafe ||= self =~ self.safe_filename_characters.to_regex_filter
+
+      ! unsafe
     end
 
     def safe_path?
@@ -117,20 +155,8 @@ module VV
       ! unsafe
     end
 
-    def safe_filename?
-      unsafe   = self.blank?
-      unsafe ||= self.starts_with? period
-      unsafe ||= self.starts_with? dash
-
-      unsafe ||= self.end_with? period
-      unsafe ||= self.end_with? dash
-
-      unsafe ||= self =~ self.safe_filename_characters.to_regex
-
-      ! unsafe
-    end
-
     def hex?
+      return false if self.blank?
       match_non_hex_digits = /\H/
       !self[match_non_hex_digits]
     end
@@ -156,25 +182,25 @@ module VV
       return false if _false
 
       message = %w[ Unable to cast supplied string to boolean,
-                  only `"true"` and `"false"` can be implicitly
-                  coerced into boolean ].spaced
-      raise UnprocessableError, message
+                    only `"true"` and `"false"` can be coerced into
+                    boolean. ].spaced
+      raise RuntimeError, message
     end
 
     def readable_to_i
       return self.to_i if self.number?
 
-      valid_postfix = self.numeral_postfixes.include? self.last
+      valid_postfix = self._numeral_postfixes.include? self.last
       valid_body    = self[0...-1].number?
       valid = valid_body && valid_postfix
 
       message = "String is not a number"
       raise StandardError, message unless valid
 
-      self[0...-1].to_i * self.numeral_postfixes[self.last]
+      self[0...-1].to_i * self._numeral_postfixes[self.last]
     end
 
-    def numeral_postfixes
+    def _numeral_postfixes
       { k: 1000,
         m: 1000_000,
         b: 1000_000_000,
@@ -188,6 +214,10 @@ module VV
 
     def to position
       self[0..position]
+    end
+
+    def from position
+      self[position..-1]
     end
 
     def _ensure_pluralize_available!
@@ -212,8 +242,8 @@ module VV
       non_ambiguous = self.pluralize != self.singularize
 
       message = \
-      "String is ambiguously plural. Cowardly exiting"
-      raise StandardError, message unless non_ambiguous
+      "String is ambiguously plural. Cowardly exiting."
+      raise RuntimeError, message unless non_ambiguous
 
       true
     end
@@ -228,10 +258,20 @@ module VV
       non_ambiguous = self.pluralize != self.singularize
 
       message = \
-      "String is ambiguously singular. Cowardly exiting"
-      raise StandardError, message unless non_ambiguous
+      "String is ambiguously singular. Cowardly exiting."
+      raise RuntimeError, message unless non_ambiguous
 
       true
+    end
+
+    def last(limit = 1)
+      if limit == 0
+        ""
+      elsif limit >= size
+        self.dup
+      else
+        self.from(-limit)
+      end
     end
 
     def first limit=1
