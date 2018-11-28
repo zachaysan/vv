@@ -1,8 +1,8 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 # Specify gem dependencies in vv.gemspec
 gemspec
 
 group :development do
-  gem 'pry'
+  gem "pry"
 end
