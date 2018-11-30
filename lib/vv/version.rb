@@ -1,3 +1,3 @@
 module VV
-  VERSION = '0.0.0.alpha.2'
+  VERSION = '0.0.1'
 end
