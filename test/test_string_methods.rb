@@ -133,12 +133,6 @@ class StringMethodsTest < Minitest::Test
     assert_equal expected_regex, string.to_regex
   end
 
-  def test_to_regexp
-    string = "[^0-9]"
-    expected_regex = Regexp.new('[^0-9]')
-    assert_equal expected_regex, string.to_regexp
-  end
-
   def test_to_regex_filter
     string = "a-c"
     expected_regexp = Regexp.new('[^a-c]')
@@ -152,12 +146,6 @@ class StringMethodsTest < Minitest::Test
 
     unsafe = "caxx" =~ string.to_regex_filter
     assert unsafe
-  end
-
-  def test_to_regexp_filter
-    string = "a-c"
-    expected_regexp = Regexp.new('[^a-c]')
-    assert_equal expected_regexp, string.to_regexp_filter
   end
 
   def test_safe_filename?
