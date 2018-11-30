@@ -119,10 +119,6 @@ module VV
       Regexp.new self
     end
 
-    def to_regexp *args, **kwargs
-      self.to_regex(*args, **kwargs)
-    end
-
     def to_regex_filter
       regex_string = '[^' + self + ']'
       regex_string.to_regex
