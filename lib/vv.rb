@@ -1,13 +1,9 @@
-Dir["lib/vv/*.rb"].each do |filepath|
-  require filepath["lib/".size..-1].chomp(".rb")
-end
+require_relative "vv/gem_methods"
+
+Gem.require_files "vv/*.rb"
 
 class String
   include VV::StringMethods
-end
-
-class Readline
-  include VV::ReadlineMethods
 end
 
 class Hash
