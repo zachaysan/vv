@@ -13,6 +13,24 @@ module VV
         true
       end
 
+      def letters
+        ("a".."z").to_a
+      end
+
+      def numbers
+        ("0".."9").to_a
+      end
+
+      def capitals
+        ("A".."Z").to_a
+      end
+
+      def letters_and_numbers(capitals: false)
+        response  = self.letters
+        response += self.capitals if capitals
+        response += self.numbers
+      end
+
     end
 
     module SharedInstanceAndClassMethods
