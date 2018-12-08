@@ -32,6 +32,23 @@ class ArrayMethodsTest < Minitest::Test
     assert_equal expected, to_grave
   end
 
+  def test_includes_any
+    assert [1,2,3].includes_any? [2]
+    assert [1,2,3].includes_any? [3,7]
+    assert [1,2,3].includes_any? [0,1]
+    assert [1,2,3].includes_any? [1,3]
+
+    refute [1,2,3].includes_any? ["2"]
+    refute [1,2,3].includes_any? [0,7]
+    refute [1,2,3].includes_any? [[1]]
+    refute [1,2,3].includes_any? [0,0]
+
+    bananas = { bananas: 2 }
+    assert_raises(TypeError) { [1,2,3].includes_any?(bananas) }
+    assert_raises(TypeError) { [1,2,3].includes_any?  2  }
+    assert_raises(TypeError) { [1,2,3].includes_any? "2" }
+  end
+
   def test_stringify_collection
     assert_equal String.empty_string, Array.new.stringify_collection
 
