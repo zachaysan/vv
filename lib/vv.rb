@@ -1,3 +1,5 @@
+require 'securerandom'
+
 require_relative "vv/gem_methods"
 
 Gem.require_files "vv/*.rb"
@@ -24,4 +26,9 @@ end
 
 class NilClass
   include VV::NilMethods
+end
+
+class Random
+  include VV::RandomMethods
+  extend  VV::RandomClassSettings
 end
