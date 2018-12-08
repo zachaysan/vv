@@ -24,7 +24,7 @@ module VV
         36
       end
 
-      def random_identifier length=nil, charset_count: nil
+      def identifier length=nil, charset_count: nil
         length ||= self.random_identifier_default_length
 
         charset_count ||= self.default_charset
@@ -37,19 +37,11 @@ module VV
         SecureRandom.random_number(range).to_s charset_count
       end
 
-      def random_character *args, capitals: false
+      def character *args, capitals: false
         String.letters_and_numbers(capitals: capitals)
           .sample(*args, random: SecureRandom)
       end
 
-    end
-
-    def random_identifier *args, **kwargs
-      self.class.random_identifier( *args, **kwargs )
-    end
-
-    def letters_and_numbers
-      self.class.letters_and_numbers
     end
 
   end
