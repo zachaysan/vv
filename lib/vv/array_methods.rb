@@ -33,6 +33,17 @@ module VV
       end
     end
 
+    def includes_any?(other)
+      raise TypeError, "Expecting array" unless other.is_a? Array
+      uother = other.uniq
+      uself  = self.uniq
+      (uself + uother).uniq.size < (uself.size + uother.size)
+    end
+
+    def include_any?(other)
+      self.includes_any?(other)
+    end
+
     def stringify_collection grave: false
       return self.gravify.stringify_collection if grave
 
