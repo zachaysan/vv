@@ -4,6 +4,33 @@ require "vv"
 
 class StringMethodsTest < Minitest::Test
 
+  def test_letters
+    assert_equal ("a".."z").to_a, String.letters
+    expected_length = 26
+    assert_equal expected_length, String.letters.length
+  end
+
+  def test_numbers
+    assert_equal ("0".."9").to_a, String.numbers
+    expected_length = 10
+    assert_equal expected_length, String.numbers.length
+  end
+
+  def test_capitals
+    assert_equal ("A".."Z").to_a, String.capitals
+    expected_length = 26
+    assert_equal expected_length, String.capitals.length
+  end
+
+  def test_letters_and_numbers
+    expected_length = 36
+    assert_equal expected_length, String.letters_and_numbers.length
+
+    expected_length += 26
+    assert_equal expected_length,
+                 String.letters_and_numbers(capitals: true).length
+  end
+
   def test_empty_string_classmethod
     expected_empty_string = ""
     assert_equal String.empty_string, expected_empty_string
