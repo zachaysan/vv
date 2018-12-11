@@ -83,6 +83,16 @@ class StringMethodsTest < Minitest::Test
                  expected_underscore_character
   end
 
+  def test_newline_classmethod
+    expected_newline = "\n"
+    assert_equal String.newline, expected_newline
+  end
+
+  def test_newline
+    expected_newline = "\n"
+    assert_equal "Example".newline, expected_newline
+  end
+
   def test_safe_filename_characters_classmethod
     expected_string = '-0-9a-zA-Z_.'
     assert_equal expected_string, String.safe_filename_characters
