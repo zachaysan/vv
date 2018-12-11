@@ -8,6 +8,10 @@ class String
   include VV::StringMethods
 end
 
+class File
+  include VV::FileMethods
+end
+
 class Hash
   include VV::HashMethods
 end
