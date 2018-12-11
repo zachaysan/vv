@@ -55,6 +55,10 @@ module VV
         "_"
       end
 
+      def newline
+        "\n"
+      end
+
       # See: `safe_filename?` and `safe_path?` methods
       def safe_filename_characters
         numbers    = '0-9'
