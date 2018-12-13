@@ -192,6 +192,10 @@ module VV
       raise
     end
 
+    def to_i!
+      Integer(self)
+    end
+
     def to_boolean
       _true = self == "true"
       return true if _true
