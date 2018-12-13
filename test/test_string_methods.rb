@@ -263,6 +263,26 @@ class StringMethodsTest < Minitest::Test
     refute "".readable_number?
   end
 
+  def test_to_i!
+    expected_int1 = 4
+    expected_int2 = 0
+    expected_int3 = -22
+    expected_int4 = 1_000_000_000
+
+    assert_equal expected_int1, "4".to_i!
+
+    assert_equal expected_int2, "00".to_i!
+    assert_equal expected_int2, "0".to_i!
+    assert_equal expected_int2, "-0".to_i!
+
+    assert_equal expected_int3, "-22".to_i!
+    assert_equal expected_int4, "1000000000".to_i!
+
+    message = assert_raises(ArgumentError) { "ab".to_i! }
+    expected_message = "invalid value for Integer(): \"ab\""
+    assert_equal expected_message, message.to_s
+  end
+
   def test_to_boolean
     assert "true".to_boolean.is_a? TrueClass
     assert "true".to_boolean
