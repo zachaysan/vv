@@ -34,7 +34,10 @@ module VV
       end
 
       def repo_directory missing_throws_exception: true
-        directory_fragments = File.vv_split self.file_directory
+        _path = caller_locations(1)[0].path
+        _file_directory = File.expand_path(File.dirname(_path))
+
+        directory_fragments = File.vv_split _file_directory
 
         while directory_fragments.any?
           current_directory = File.join directory_fragments
@@ -57,7 +60,7 @@ module VV
       end
 
       def file_directory
-        File.dirname caller_locations[0].path
+        File.expand_path(File.dirname(caller_locations[0].path))
       end
 
       def file
