@@ -75,10 +75,6 @@ module VV
 
     end
 
-    def blank?
-      self == ""
-    end
-
     def starts_with? *args
       self.start_with?(*args)
     end
@@ -227,6 +223,49 @@ module VV
         m: 1000_000,
         b: 1000_000_000,
         t: 1000_000_000_000 }.stringify_keys
+    end
+
+    def style *args
+      color = bold = underline = italic = nil
+
+      args.flatten!
+      args.map! { |arg| arg.to_sym }
+
+      args.each do |arg|
+        if Color.known_color? arg
+          if color.present?
+            raise "Color already set"
+          else
+            color = Color.new arg
+          end
+        elsif arg == :bold
+          bold = Bold.new
+        elsif arg == :underline
+          underline = Underline.new
+        elsif ( arg == :italic ) or ( arg == :italics )
+          italic = Italic.new
+        else
+          raise NotImplemented
+        end
+      end
+
+      reset = Format.reset_code
+      response = self.chomp(reset) + reset
+
+      response.prepend italic.code    if italic
+      response.prepend underline.code if underline
+      response.prepend bold.code      if bold
+
+      if color
+        start  = response.index color.start_code
+        if start
+          finish = response[start..-1].index("m") + start
+          response.slice! start..finish
+        end
+        response.prepend color.code
+      end
+
+      response
     end
 
     def insta
