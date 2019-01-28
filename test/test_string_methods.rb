@@ -317,6 +317,47 @@ class StringMethodsTest < Minitest::Test
     end
   end
 
+  def test_style
+    foo_blue = "foo".style :blue
+    expected_encoding = "\e[38;2;0;0;255mfoo\e[0m"
+    assert_equal expected_encoding, foo_blue
+  end
+
+  def test_style_with_bold
+    expected_encoding = "\e[38;2;34;139;34m\e[1mBAR\e[0m"
+
+    bold_forest_green_bar = "BAR".style :forestgreen, :bold
+    assert_equal expected_encoding, bold_forest_green_bar
+
+    bold_forest_green_bar = "BAR".style :forest_green, :bold
+    assert_equal expected_encoding, bold_forest_green_bar
+  end
+
+  def test_style_with_underline
+    underlined_elf = "elf".style :underline
+    expected_elf_on_a_shelf = "\e[4melf\e[0m"
+
+    assert_equal expected_elf_on_a_shelf, underlined_elf
+  end
+
+  def test_style_with_italic
+    sarcasm = "of course not".style :italic
+    expected_sarcasm = "\e[3mof course not\e[0m"
+    assert_equal expected_sarcasm, sarcasm
+    # Some people use the plural when styling
+    sarcasm = "of course not".style :italics
+    assert_equal expected_sarcasm, sarcasm
+  end
+
+  def test_chained_styles
+    sarcasm = "of course not".style :italic
+    chained = sarcasm.style(:blue)
+                .style :forestgreen, :bold, :underline
+    expected_chained = \
+    "\e[38;2;34;139;34m\e[1m\e[4m\e[3mof course not\e[0m"
+    assert_equal expected_chained, chained
+  end
+
   def test_insta
     assert_equal "@age", "age".insta
     assert_equal "@age", "@age".insta
