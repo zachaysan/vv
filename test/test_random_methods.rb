@@ -17,6 +17,15 @@ class RandomMethodsTest < Minitest::Test
     assert_equal expected_length, random_identifier.length
   end
 
+  # There is a potential off-by-one error that was hit earlier
+  def test_random_identifier_length
+    expected_length = 2
+    10_000.times do
+      random_identifier = Random.identifier expected_length
+      assert_equal expected_length, random_identifier.length
+    end
+  end
+
   def test_random_identifier_with_default_length
     random_identifier = Random.identifier
     expected_length = 40
