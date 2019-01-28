@@ -13,14 +13,6 @@ module VV
 
     end
 
-    def blank?
-      self.size == 0
-    end
-
-    def empty?
-      self.blank?
-    end
-
     def gravify
       self.collect do |elem|
         "`#{elem}`"
