@@ -24,17 +24,19 @@ module VV
         36
       end
 
-      def identifier length=nil, charset_count: nil
+      def identifier length=nil, charset_radix: nil
         length ||= self.random_identifier_default_length
 
-        charset_count ||= self.default_charset
-        largest_digit   = (charset_count - 1).to_s charset_count
+        charset_radix ||= self.default_charset
+        largest_digit   = (charset_radix - 1).to_s charset_radix
 
-        start  = ( largest_digit * ( length - 1 ) ).to_i charset_count
-        finish = ( largest_digit * ( length     ) ).to_i charset_count
+        start  = ( largest_digit * ( length - 1 ) ).to_i charset_radix
+        start += 1
+
+        finish = ( largest_digit * ( length     ) ).to_i charset_radix
         range  = start..finish
 
-        SecureRandom.random_number(range).to_s charset_count
+        SecureRandom.random_number(range).to_s charset_radix
       end
 
       def character *args, capitals: false
