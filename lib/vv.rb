@@ -3,6 +3,7 @@ require 'securerandom'
 require_relative "vv/gem_methods"
 
 Gem.require_files "vv/*.rb"
+Gem.require_files "vv/style/*.rb"
 
 class String
   include VV::StringMethods
