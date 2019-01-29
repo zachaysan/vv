@@ -56,14 +56,14 @@ module VV
     module_function :version
 
     def build( name: )
-      %x{ find lib/ | \\
+      puts %x{ find lib/ | \\
          xargs git ls-files --error-unmatch > /dev/null 2>&1 \\
          || ( echo && \\
               echo "Warning: A file in lib/ is not tracked by git" && \\
               echo )
 
          rm #{name}-*.gem
-         gem uninstall #{name} > /dev/null
+         gem uninstall --ignore-dependencies #{name} > /dev/null
          bundle
          gem build #{name}.gemspec
          gem install $(readlink -f #{name}-*.gem | sort | tail -n 1 ) --pre
