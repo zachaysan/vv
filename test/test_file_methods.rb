@@ -1,5 +1,4 @@
-require "minitest/autorun"
-require "vv"
+require_relative "test_helper.rb"
 
 class FileMethodsTest < Minitest::Test
 

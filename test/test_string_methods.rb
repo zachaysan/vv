@@ -1,6 +1,5 @@
 # coding: utf-8
-require "minitest/autorun"
-require "vv"
+require_relative "test_helper.rb"
 
 class StringMethodsTest < Minitest::Test
 
