@@ -4,6 +4,7 @@ require_relative "vv/gem_methods"
 
 Gem.require_files "vv/*.rb"
 Gem.require_files "vv/style/*.rb"
+Gem.require_files "vv/utility/*.rb"
 
 class String
   include VV::StringMethods
