@@ -1,5 +1,4 @@
-#!/bin/bash
-rm vv-*.gem
-gem uninstall vv > /dev/null
-gem build vv.gemspec
-gem install $(readlink -f vv-*.gem | sort | tail -n 1 ) --pre
+#!/usr/bin/env ruby
+require_relative "../lib/vv/utility/automate"
+
+VV::Automate.build name: "vv"
