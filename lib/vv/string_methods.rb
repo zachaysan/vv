@@ -25,11 +25,21 @@ module VV
         ("A".."Z").to_a
       end
 
-      def letters_and_numbers(capitals: false)
+      def letters_and_numbers capitals: false
         response  = self.letters
         response += self.capitals if capitals
         response += self.numbers
       end
+
+      def capture_stdout(&block)
+        original_stdout = $stdout
+        $stdout = StringIO.new
+        yield
+        $stdout.string
+      ensure
+        $stdout = original_stdout
+      end
+      alias_method :get_stdout, :capture_stdout
 
     end
 
@@ -55,6 +65,10 @@ module VV
         "_"
       end
 
+      def space
+        " "
+      end
+
       def newline
         "\n"
       end
@@ -73,6 +87,10 @@ module VV
           period ].join
       end
 
+    end
+
+    def includes? *args
+      self.include?(*args)
     end
 
     def starts_with? *args
@@ -96,6 +114,10 @@ module VV
 
     def with_ending(string)
       self.chomp(string) + string
+    end
+
+    def with_newline
+      self.with_ending newline
     end
 
     def squish!
@@ -225,6 +247,17 @@ module VV
         t: 1000_000_000_000 }.stringify_keys
     end
 
+    def unstyle
+      self.gsub( /\e\[+\d+m/, empty_string )
+        .gsub( /\e\[((\d+)+\;)+\d+m/, empty_string )
+    end
+    alias_method :unstyled, :unstyle
+
+    def unstyle!
+      self.gsub!( /\e\[+\d+m/,          empty_string )
+      self.gsub!( /\e\[((\d+)+\;)+\dm/, empty_string )
+    end
+
     def style *args
       color = bold = underline = italic = nil
 
@@ -271,6 +304,10 @@ module VV
     def insta
       return self if self.starts_with?("@")
       "@#{self}"
+    end
+
+    def insta_sym
+      self.insta.to_sym
     end
 
     def to position
@@ -379,6 +416,48 @@ module VV
 
     def tenth
       self[9]
+    end
+
+    def cli_print width: 80,
+                  padding: 0,
+                  position: 0,
+                  hard_wrap: false
+
+      raise NotImplemented if hard_wrap
+      raise NotImplemented if self.includes? newline
+
+      pad_length = padding - position
+      position += pad_length
+      print pad_length.spaces
+
+      unstyled_length = self.unstyled.length
+      remaining_length = width - position
+      if unstyled_length <= remaining_length
+        print self
+        position += unstyled_length
+        return position
+      end
+
+      space_index   = self[0..remaining_length].rindex(" ")
+      space_index ||= self.index(" ")
+
+      if space_index
+        sub = self[0..space_index]
+        print sub
+        puts
+        position = 0
+        start = space_index + 1
+        return self[start..-1].cli_print width: width,
+                                         padding: padding,
+                                         position: position,
+                                         hard_wrap: hard_wrap
+      else
+        print self
+        puts
+        position = 0
+      end
+
+      return position
     end
 
   end
