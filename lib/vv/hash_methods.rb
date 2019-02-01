@@ -38,5 +38,41 @@ module VV
       self
     end
 
+    def cli_print width: 80,
+                  position: 0,
+                  padding: 0
+
+      key_padding = nil
+
+      String.capture_stdout {
+        key_padding = self.keys.map { | key |
+          key.cli_print width: width,
+                        position: position,
+                        padding: padding
+        }.max
+      }
+
+      key_padding += 1
+
+      self.each do | key, value |
+        position = key.cli_print width: width,
+                                 position: position,
+                                 padding: padding
+
+        print ( key_padding - position ).spaces
+
+        value_padding = position = key_padding
+
+        position = value.cli_print width: width,
+                                   position: position,
+                                   padding: value_padding
+
+        puts
+        position = 0
+      end
+
+      position
+    end
+
   end
 end
