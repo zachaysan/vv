@@ -1,10 +1,15 @@
 require 'securerandom'
+require 'set'
 
 require_relative "vv/gem_methods"
 
 Gem.require_files "vv/*.rb"
 Gem.require_files "vv/style/*.rb"
 Gem.require_files "vv/utility/*.rb"
+
+class Symbol
+  include VV::SymbolMethods
+end
 
 class String
   include VV::StringMethods
