@@ -73,9 +73,10 @@ module VV
 
     def push( name: )
       puts %x{ TAG_VERSION=$(./bin/version)
+               git push origin HEAD && \\
+               gem push $(readlink -f #{name}-*.gem | sort | tail -n 1) && \\
                git push origin v${TAG_VERSION}
-               gem push $(readlink -f #{name}-*.gem | sort | tail -n 1 )
-      }
+       }
     end
     module_function :push
 
