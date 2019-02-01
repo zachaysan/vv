@@ -357,6 +357,17 @@ class StringMethodsTest < Minitest::Test
     assert_equal expected_chained, chained
   end
 
+  def test_unstyle
+    loud = "Hello!".style :red, :bold, :underline, :italic
+    expected_string = "Hello!"
+    refute_equal expected_string, loud
+    assert_equal expected_string, loud.unstyled
+    assert_equal expected_string, loud.unstyle
+    refute_equal expected_string, loud
+    loud.unstyle!
+    assert_equal expected_string, loud
+  end
+
   def test_insta
     assert_equal "@age", "age".insta
     assert_equal "@age", "@age".insta
@@ -531,6 +542,44 @@ class StringMethodsTest < Minitest::Test
 
   def test_tenth
     assert_equal "A", "123456789A".tenth
+  end
+
+  def test_cli_print
+    string = "block"
+    position = nil
+    expected_position = string.length
+
+    printed = \
+    String.capture_stdout { position = string.cli_print }
+
+    assert_equal string, printed
+    assert_equal expected_position, position
+
+    long_string = string * 20
+    expected_printed_length = 101
+    assert_equal( expected_printed_length - 1,
+                  long_string.length )
+
+    printed = \
+    String.get_stdout { position = long_string.cli_print }
+
+    assert_equal long_string.with_newline, printed
+    assert_equal expected_printed_length,  printed.length
+    expected_position = 0
+    assert_equal expected_position, position
+  end
+
+  def test_colored_cli_print
+    wicked = "wicked"
+    styled =  wicked.style :indianred, :bold
+
+    expected_string = "\e[38;2;205;92;92m\e[1mwicked\e[0m"
+    assert_equal expected_string, styled
+
+    position = nil
+    printed  = String.get_stdout { position = styled.cli_print }
+    assert_equal wicked.length, position
+    assert_equal expected_string, printed
   end
 
 end
