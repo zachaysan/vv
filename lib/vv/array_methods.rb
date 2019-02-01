@@ -3,6 +3,7 @@ module VV
 
     def self.included(base)
       base.extend(ClassMethods)
+      base.attr_accessor :cli_print_separator
     end
 
     module ClassMethods
@@ -91,6 +92,43 @@ module VV
 
     def tenth
       self[9]
+    end
+
+    def cli_print width: 80,
+                  padding: 0,
+                  position: 0,
+                  separator: nil
+
+      @cli_print_separator ||= String.space
+      separator ||= @cli_print_separator
+
+      pad_length = padding - position
+      position += pad_length
+      print pad_length.spaces
+
+      separator_required = false
+      self.each do | elem |
+        printable = String.capture_stdout {
+          elem.cli_print width: width,
+                         padding: padding,
+                         position: position
+        }
+        string = printable.dup
+        string.prepend separator if separator_required
+        delta = string.unstyled.length
+
+        if position + delta > width
+          puts
+          print padding.spaces
+          print printable
+          position = padding + printable.unstyled.length
+        else
+          print string
+          position += delta
+        end
+        separator_required = true
+      end
+      position
     end
 
   end
