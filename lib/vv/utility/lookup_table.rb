@@ -18,17 +18,23 @@ class LookupTable
   end
 
   def []= key, value
-    canonical = @canonicals[key] || key
-    @data[canonical] = value
+    @data[ self.canonical key ] = value
   end
 
   def [] key
-    canonical = @canonicals[key] || key
-    @data[canonical]
+    @data[ self.canonical key ]
+  end
+
+  def canonical key
+    @canonicals[key] || key
   end
 
   def canonical_keys
-    Set.new( @aliases.keys + @data.keys )
+    @data.keys + (@aliases.keys - @data.keys)
+  end
+
+  def include? key
+    @data.include?( self.canonical key )
   end
 
   def to_h
