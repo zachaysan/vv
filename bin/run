@@ -1,2 +1,10 @@
-#!/bin/bash
-rake
+#!/usr/bin/env ruby
+require 'pry'
+require_relative "../lib/vv"
+
+# There is still some annoyances that should be handled for
+# this to all work seemlessly, but at least this general
+# approach will work for *any* stupid test suite, including
+# ones in other languages. I still can't for the life of me
+# understand why people make it so painful.
+VV::Automate.run
