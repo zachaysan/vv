@@ -88,4 +88,14 @@ class LookupTabletest < Minitest::Test
     assert_raises(ArgumentError) { lt.keys 45 }
   end
 
+  def test_includes?
+    lt = LookupTable.new
+    lt.alias key: :canada, to: :ca
+    refute lt.include? :canada
+    refute lt.include? :ca
+    lt[:ca] = { population:  37_000_000 }
+    assert lt.include? :ca
+    assert lt.include? :canada
+  end
+
 end
