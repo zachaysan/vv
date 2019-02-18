@@ -70,4 +70,108 @@ class FileMethodsTest < Minitest::Test
     assert_equal expected_directory, directory
   end
 
+  def test_move_directory
+    message = \
+    assert_raises(NoMethodError) { File.move_directory }
+      .message
+
+    expected_message = \
+    "Moving directories is confusing. Call either "  +
+    "`rename_directory` or `move_directory_into` "   +
+    "depending on your needs. There are many aliases."
+
+    assert_equal expected_message, message
+  end
+
+  def test_move_directory_into
+    base = File.cache_home! "vv_tests"
+
+    into = base.file_join "needs_tests"
+    from = base.file_join "testytest"
+
+    expected_into = \
+    File.join ENV['HOME'], ".cache", "vv_tests", "needs_tests"
+    assert_equal expected_into, into
+
+    from_ending = "testytest"
+    expected_from = \
+    File.join ENV['HOME'], ".cache", "vv_tests", from_ending
+    assert_equal expected_from, from
+
+    into_response = File.create_directory into
+    assert_raises(Errno::EEXIST) { File.make_dir into }
+    assert_equal expected_into, into_response
+
+    from_response = File.create_directory from
+    assert_raises(Errno::EEXIST) { File.make_dir from }
+    assert_equal expected_from, from_response
+    File.move_directory_into from, into
+
+    assert into.is_directory_path?
+    refute from.is_directory_path?
+    assert File.join(into, from_ending).is_directory_path?
+  ensure
+    File.remove_directory from, quiet_if_gone: true
+    File.remove_directory into, quiet_if_gone: true
+  end
+
+  def test_rename_directory
+    base = File.cache_home! "vv_tests"
+
+    dir = base.file_join "needs_tests"
+    refute dir.is_directory_path?
+    File.make_dir dir
+    assert dir.is_directory_path?
+
+    new_dir = base.file_join "no_tests_pls"
+    refute new_dir.is_directory_path?
+    File.rename_directory dir, new_dir
+    refute dir.is_directory_path?
+    assert new_dir.is_directory_path?
+  ensure
+    File.remove_directory base
+  end
+
+  def test_make_directory_if_not_exists
+    base = File.cache_home! "vv_tests"
+    new_directory = "gandalf"
+    dir = base.file_join new_directory
+    refute dir.is_directory_path?
+    File.make_directory_if_not_exists dir
+    assert dir.is_directory_path?
+    File.make_directory_if_not_exists dir
+    assert dir.is_directory_path?
+  end
+
+  def test_make_directory
+    base = File.cache_home! "vv_tests"
+    new_directory = "gandalf"
+    dir = base.file_join new_directory
+    refute dir.is_directory_path?
+    File.make_directory dir
+    assert dir.is_directory_path?
+
+    message = assert_raises(Errno::EEXIST) {
+      File.make_directory dir
+    }.message
+
+    assert message.starts_with? "File exists @ dir_s_mkdir"
+  ensure
+    File.remove_directory base
+  end
+
+  def test_remove_directory
+    base = File.cache_home! "vv_tests"
+    new_directory = "gandalf"
+    dir = base.file_join new_directory
+    refute dir.is_directory_path?
+    File.remove_directory dir, quiet_if_gone: true
+    File.make_directory dir
+    assert dir.is_directory_path?
+    File.remove_directory dir
+    refute dir.is_directory_path?
+  ensure
+    File.remove_directory base
+  end
+
 end
