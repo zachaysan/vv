@@ -6,6 +6,14 @@ class Object
     respond_to?(:empty?) ? !!empty? : !self
   end unless method_defined? :blank?
 
+  def cli_printable **kwargs
+    String.get_stdout { self.cli_print( **kwargs ) }
+  rescue NoMethodError
+    message = \
+    "`cli_printable` requires `cli_print` on child class"
+    fail NoMethodError, message
+  end unless method_defined? :cli_printable
+
   def present?
     !blank?
   end unless method_defined? :present?
