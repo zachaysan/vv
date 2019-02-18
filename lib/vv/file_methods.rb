@@ -75,6 +75,23 @@ module VV
         File::SEPARATOR
       end
 
+      def copy_into filepath,
+                    directory,
+                    allow_hidden: true,
+                    allow_absolute: true
+
+        message = "Filepath `#{filepath}` is unsafe."
+        fail message unless filepath.safe_path?
+
+        message = "Filepath `#{filepath}` is a directory."
+        fail message if filepath.is_directory_path?
+
+        message = "No such `#{directory}` directory."
+        fail message unless directory.is_directory_path?
+
+        FileUtils.cp filepath, directory
+      end
+
       def rename_directory from,
                            to,
                            allow_hidden: true,
