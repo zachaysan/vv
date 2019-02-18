@@ -84,19 +84,19 @@ class FileMethodsTest < Minitest::Test
   end
 
   def test_move_directory_into
-    cache_dir = "vv_tests4"
-    base = File.cache_home! cache_dir
+    dirname = "vv_tests4"
+    base = File.cache_home! dirname
 
     into = base.file_join "needs_tests"
     from = base.file_join "testytest"
 
     expected_into = \
-    File.join ENV['HOME'], ".cache", cache_dir, "needs_tests"
+    File.join ENV['HOME'], ".cache", dirname, "needs_tests"
     assert_equal expected_into, into
 
     from_ending = "testytest"
     expected_from = \
-    File.join ENV['HOME'], ".cache", cache_dir, from_ending
+    File.join ENV['HOME'], ".cache", dirname, from_ending
     assert_equal expected_from, from
 
     into_response = File.create_directory into
@@ -117,7 +117,10 @@ class FileMethodsTest < Minitest::Test
   end
 
   def test_rename_directory
-    base = File.cache_home! "vv_tests0"
+    dirname = "vv_tests0"
+    File.remove_directory File.cache_home(dirname),
+                          quiet_if_gone: true
+    base = File.cache_home! dirname
 
     dir = base.file_join "needs_tests"
     refute dir.is_directory_path?
@@ -134,7 +137,10 @@ class FileMethodsTest < Minitest::Test
   end
 
   def test_make_directory_if_not_exists
-    base = File.cache_home! "vv_tests1"
+    dirname = "vv_tests1"
+    File.remove_directory File.cache_home(dirname),
+                          quiet_if_gone: true
+    base = File.cache_home! dirname
     new_directory = "gandalf"
     dir = base.file_join new_directory
     refute dir.is_directory_path?
@@ -142,11 +148,14 @@ class FileMethodsTest < Minitest::Test
     assert dir.is_directory_path?
     File.make_directory_if_not_exists dir
     assert dir.is_directory_path?
+  ensure
+    File.remove_directory base
   end
 
   def test_make_directory
     dirname = "vv_tests2"
-    File.remove_directory dirname, quiet_if_gone: true
+    File.remove_directory File.cache_home(dirname),
+                          quiet_if_gone: true
     base = File.cache_home! dirname
     new_directory = "elf"
     dir = base.file_join new_directory
