@@ -1,7 +1,21 @@
 class Integer
 
   def spaces
-    ( self > 0 ) ? ( " " * self ) : String.empty_string
+    characters String.space
+  end
+
+  def dashes
+    characters String.dash
+  end
+
+  def characters character, fail_on_negative: false
+    message = "Expected single character, not #{character}."
+    fail ArgumentError, message if character.length > 1
+
+    message = "Expected non-negative integer, not `#{self}`."
+    fail message if self < 0 and fail_on_negative
+
+    ( self > 0 ) ? ( character * self ) : String.empty_string
   end
 
   def to_i!
