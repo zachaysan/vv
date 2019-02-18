@@ -57,8 +57,16 @@ module VV
         "-"
       end
 
+      def equals_sign
+        "="
+      end
+
       def period
         "."
+      end
+
+      def colon
+        ":"
       end
 
       def underscore_character
@@ -88,6 +96,8 @@ module VV
       end
 
     end
+
+    # Instance methods start
 
     def includes? *args
       self.include?(*args)
@@ -168,9 +178,10 @@ module VV
       self.to_regex_filter
     end
 
-    def safe_filename?
+    def safe_filename?( allow_hidden: false )
       unsafe   = self.blank?
-      unsafe ||= self.starts_with? period
+
+      unsafe ||= self.starts_with?(period) unless allow_hidden
       unsafe ||= self.starts_with? dash
 
       unsafe ||= self.end_with? period
@@ -181,14 +192,50 @@ module VV
       ! unsafe
     end
 
-    def safe_path?
-      separator = File::SEPARATOR
+    def safe_path?( allow_hidden: false, allow_absolute: false )
+      safe = self.safe_dir_path? allow_hidden: allow_hidden,
+                                 allow_absolute: allow_absolute
 
-      unsafe   = self.starts_with? separator
-      unsafe ||= self.ends_with?   separator
-      unsafe ||= self.split(separator).map(&:safe_filename?).map(&:!).any?
+      unsafe   = ( ! safe )
+      unsafe ||= self.ends_with? File::SEPARATOR
 
       ! unsafe
+    end
+
+    def safe_dir_path? allow_hidden: false,
+                       allow_absolute: true
+      separator = File::SEPARATOR
+
+      unsafe   = false
+      unsafe ||= self.starts_with?(separator) unless allow_absolute
+      unsafe ||= self.after(separator, safe: false)
+                   .split(separator).map do |fragment|
+        fragment.safe_filename? allow_hidden: allow_hidden
+      end.map(&:!).any?
+
+      ! unsafe
+    end
+
+    def is_directory_path?
+      File.directory? self
+    end
+
+    def is_file_path?
+      File.file? self
+    end
+
+    def file_join *args
+      unsafe = args.reject(&:safe_path?)
+
+      return File.join self, *args if unsafe.blank?
+
+      frags = unsafe.first(3).stringify_collection grave: true
+      count = unsafe.count
+
+      message = \
+      "#{count} unsafe path fragments including: #{frags}"
+
+      fail ArgumentError, message
     end
 
     def hex?
