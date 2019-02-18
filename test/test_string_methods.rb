@@ -227,6 +227,19 @@ class StringMethodsTest < Minitest::Test
     unsafe_paths.each { |path| refute path.safe_path? }
   end
 
+  def test_dir_path
+    path = "/home/zach/.cache/vv_tests/testytest"
+    safe = path.safe_dir_path? allow_hidden: false, allow_absolute: true
+    refute safe
+    safe = path.safe_dir_path? allow_hidden: true, allow_absolute: false
+    refute safe
+    safe = path.safe_dir_path? allow_hidden: false, allow_absolute: false
+    refute safe
+
+    safe = path.safe_dir_path? allow_hidden: true, allow_absolute: true
+    assert safe
+  end
+
   def test_hex?
     assert "00001AB".hex?
     assert "1322fe2".hex?
