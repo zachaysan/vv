@@ -1,5 +1,8 @@
 require 'securerandom'
 require 'set'
+require 'bigdecimal'
+require 'bigdecimal/util'
+require 'fileutils'
 
 require_relative "vv/gem_methods"
 
