@@ -80,5 +80,82 @@ module VV
     end
     module_function :push
 
+    def run command: nil, annoying_command: nil
+      command ||= "rake"
+      annoying_command ||= command
+      args = ARGV.to_a
+
+      # breaking out of binding.pry is hard without exec
+      exec command if args.empty?
+
+      return annoying_command(args, command: annoying_command)
+    end
+    module_function :run
+
+    def annoying_command args, command: nil
+      command ||= "rake"
+
+      test_dir = File.join File.expand_path(Dir.pwd), "test"
+      temp_test_dir = "temp_test_dir_#{Random.identifier 6}"
+
+      message = "Cannot find test directory `#{test_dir}`."
+      fail message unless test_dir.is_directory_path?
+
+      fail "Unexpected arg count" if args.size > 2
+
+      helper_file = "test_helper.rb"
+      file, line_number = args
+
+      if line_number.nil?
+        file, line_number = file.split(String.colon)[0..1]
+      end
+
+      File.rename_directory test_dir, temp_test_dir
+      sleep 0.01
+      File.make_directory test_dir
+
+      path = file.split(File.separator).last
+      new_filename = temp_test_dir.file_join path
+      helper_file  = temp_test_dir.file_join helper_file
+      File.copy_into new_filename, test_dir
+      File.copy_into helper_file,  test_dir
+
+      if line_number
+        line_number = line_number.to_i!
+        i = j = line_number - 1
+        lines = File.vv_readlines test_dir.file_join(path)
+
+        while i > 0
+          line = lines[i]
+          break if line.start_with? "  def "
+          i -= 1
+        end
+
+        while j < lines.count
+          line = lines[j]
+          break if line.start_with? "  end"
+          j += 1
+        end
+        content = (lines[0..3] + lines[i..j] + lines[-2..-1] ).join("\n")
+        content += "\n"
+
+        File.write test_dir.file_join(path), content
+      end
+
+      full_command = \
+        [ command,
+          "rm -r #{test_dir}",
+          "mv #{temp_test_dir} #{test_dir}" ].join(" && ")
+
+      exec full_command
+
+    # The below shouldn't run in normal operation, since
+    # exec will replace the current process
+    ensure
+      File.remove_directory test_dir
+      File.rename_directory temp_test_dir, test_dir
+    end
+    module_function :annoying_command
+
   end
 end
