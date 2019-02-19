@@ -5,6 +5,7 @@ require 'bigdecimal/util'
 require 'fileutils'
 
 require_relative "vv/gem_methods"
+require_relative "vv/set_methods"
 
 Gem.require_files "vv/*.rb"
 Gem.require_files "vv/style/*.rb"
@@ -24,6 +25,10 @@ end
 
 class Hash
   include VV::HashMethods
+end
+
+class Set
+  include VV::SetMethods
 end
 
 class Array
