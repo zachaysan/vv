@@ -160,6 +160,7 @@ module VV
       end
       alias_method :xdg_config_home, :config_home
 
+      # Where application specific files should be stored
       def data_home
         path   = ENV['XDG_DATA_HOME']
         return path unless path.blank?
