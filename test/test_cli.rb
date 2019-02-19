@@ -34,6 +34,7 @@ class CLITest < Minitest::Test
     cli.parse_flags "-vvv"
     refute_nil cli.settings
     assert cli.settings["-vvv"]
+    assert_equal :very_very_verbose, cli.verbosity
   end
 
   def test_with_default_locations
@@ -47,6 +48,28 @@ class CLITest < Minitest::Test
     assert_equal expected_cache_path, cli.cache_path
     expected_data_path = File.join File.data_home, expected_dirname
     assert_equal expected_data_path, cli.data_path
+  end
+
+  def test_help?
+    cli = VV::CLI.new
+    refute cli.help?
+    cli.parse_flags "--help"
+    assert cli.help?
+    cli.parse_flags ""
+    refute cli.help?
+    cli.parse_flags "-h"
+    assert cli.help?
+    cli.parse_flags ""
+    refute cli.help?
+    cli.parse_flags "-h --help"
+    assert cli.help?
+    cli.parse_flags ""
+    refute cli.help?
+    cli.parse_flags "-?"
+    assert cli.help?
+
+    printed = String.get_stdout { cli.print_help width: 55 }
+    assert printed.starts_with? "usage:"
   end
 
 end
