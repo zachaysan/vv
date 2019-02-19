@@ -6,10 +6,12 @@ module VV
                 :settings,
                 :cache_path,
                 :config_path,
-                :data_path
+                :data_path,
+                :verbosity
 
     def initialize version: nil,
                    name: nil,
+                   argv: nil,
                    config_path: nil,
                    cache_path:  nil,
                    data_path:   nil
@@ -28,6 +30,11 @@ module VV
       @settings = nil
 
       self.set_default_paths
+
+      # Most of the time we want to just initialize the
+      # thing fully, but it's helpful to test and debug if
+      # we're not forced to.
+      self.parse_flags argv unless argv.nil?
     end
 
     def set_default_paths
@@ -47,6 +54,38 @@ module VV
     def parse_flags argv
       argv = argv.split " " if argv.is_a? String
       @settings = @option_router.parse argv
+      set_verbosity
+    end
+
+    def set_normal_verbosity
+      @verbosity = :normal
+    end
+
+    def set_verbosity
+      verbosity_flags = %w[ -v -vv -vvv -q -s ]
+      flag_set = @settings.keys.includes_any? verbosity_flags
+      return self.set_normal_verbosity unless flag_set
+
+      @settings.keys.includes_one! verbosity_flags
+
+      flag = (@settings.keys & verbosity_flags).first
+
+
+      index = verbosity_flags.index(flag)
+      @verbosity = %i[ verbose
+                       very_verbose
+                       very_very_verbose
+                       quiet
+                       absolute_silence ][index]
+    end
+
+    def help?
+      return false if @settings.nil?
+      @settings["-h"]
+    end
+
+    def print_help width: 80
+      option_router.help_doc.cli_print width: width
     end
 
   end
@@ -112,7 +151,7 @@ module VV
       "Duplicate command line flag #{@flag} encountered."
 
       @flag = lookup_canonical_flag @flag
-      fail message if @response.include? @flag
+      fail message if @parsed_arguments.include? @flag
 
       self.set_flag
     end
@@ -129,13 +168,13 @@ module VV
       value   = @value
       value &&= @value.to_d if decimal?
       value ||= true
-      @response[@flag] = value
+      @parsed_arguments[@flag] = value
     end
 
     # This needs a refactor.
     def parse argv
       @flags_cease = false
-      @response = {}
+      @parsed_arguments = {}
 
       argv.each do |arg|
         next add_input_arg arg if @flags_cease
@@ -155,7 +194,9 @@ module VV
         self.cease_flag_consideration
       end
 
-      @response
+      @flag = @value = @current_flag = nil
+
+      @parsed_arguments
     end
 
     def end_of_commands
@@ -250,8 +291,8 @@ module VV
       collection = \
       @flag_settings[@flag][:type] == :collection
       if collection
-        @response[@flag] ||= []
-        @response[@flag] << @value
+        @parsed_arguments[@flag] ||= []
+        @parsed_arguments[@flag] << @value
       else
         @current_flag = nil
         self.set_flag
@@ -260,8 +301,8 @@ module VV
     end
 
     def add_input_arg arg
-      @response[:input_arguments] ||= []
-      @response[:input_arguments] << arg
+      @parsed_arguments[:input_arguments] ||= []
+      @parsed_arguments[:input_arguments] << arg
     end
 
     def standardize_value
