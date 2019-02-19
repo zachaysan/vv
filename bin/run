@@ -1,6 +1,16 @@
 #!/usr/bin/env ruby
 require 'pry'
-require_relative "../lib/vv"
+
+begin
+  require 'vv'
+rescue LoadError
+  puts
+  puts "VV gem failed to load, degrading gracefully."
+  puts
+  require_relative "../lib/vv/version.rb"
+  require_relative "../lib/vv/utility/automate"
+end
+
 
 # There is still some annoyances that should be handled for
 # this to all work seemlessly, but at least this general
