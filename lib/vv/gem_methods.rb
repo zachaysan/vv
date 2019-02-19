@@ -9,6 +9,7 @@ module Gem
     Gem.find_files(glob).each do |filepath|
       start = dirname.size + 1
       ruby_require_path = filepath[start..-1]
+
       if block_given?
         yield ruby_require_path
       else
