@@ -48,6 +48,10 @@ class ArrayMethodsTest < Minitest::Test
     assert_raises(TypeError) { [1,2,3].includes_any? "2" }
   end
 
+  def test_includes_one!
+    assert [1,2,3].includes_one? [1]
+  end
+
   def test_stringify_collection
     assert_equal String.empty_string, Array.new.stringify_collection
 
