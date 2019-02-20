@@ -132,6 +132,37 @@ class StringMethodsTest < Minitest::Test
     assert_equal expected_string, "lol.rb".with_ending(".rb")
   end
 
+  def test_split_english
+    split = "something, wonderful, or terrible".split_english
+    expected_split = %w[ something wonderful terrible ]
+    assert_equal expected_split, split
+  end
+
+  def test_split_english_with_newlines
+    input = "something, wonderful,\nor terrible"
+    split = input.split_english ignore_newlines: true
+    expected_split = %w[ something wonderful terrible ]
+    assert_equal expected_split, split
+  end
+
+  def test_split_english_with_newlines_false
+    input = "something, wonderful,\nor terrible"
+    message =assert_raises(RuntimeError) do
+      input.split_english ignore_newlines: false
+    end.message
+    expected_message = \
+    "Newlines encountered, but disallowed. " + \
+    "Set `ignore_newlines` to true to treat as spaces."
+    assert_equal expected_message, message
+  end
+
+  def test_split_via
+    via = [ String.colon, String.space ]
+    split = "foo:bar:baz count:something:grand".split_via via
+    expected_split = %w[ foo bar baz count something grand ]
+    assert_equal expected_split, split
+  end
+
   def test_squish!
     expected_string = "pulpy fruit paste"
     squishy_string = "\npulpy\t fruit   paste  "
