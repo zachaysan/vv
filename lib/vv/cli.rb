@@ -79,6 +79,34 @@ module VV
                        absolute_silence ][index]
     end
 
+    def await_input message: nil,
+                    force_match: false,
+                    input: nil
+
+      @prompt_message   = message
+      @prompt_message ||= ""
+
+      response = self.parse_message! input: input
+
+      @prompt_message = nil
+
+      response
+    end
+
+    def parse_message! input: nil
+      @prompt_table = LookupTable.new
+      tokens = @prompt_message.split_english
+      tokens.each do |_token|
+        token = _token.gsub("(","").gsub(")","")
+        alias_token = token.split("(")[0].split(")")[0]
+        @prompt_table[token] = true
+        @prompt_table.alias key: alias_token, to: token
+      end
+
+      input ||= Readline.prompt(@prompt_message)
+      return @prompt_table.lookup_key input
+    end
+
     def help?
       return false if @settings.nil?
       @settings["-h"]
