@@ -130,6 +130,44 @@ module VV
       self.with_ending newline
     end
 
+    def split_via *arguments, ignore_newlines: false
+      args = arguments.flatten.sort_by(&:length).reverse
+
+      response = [self.dup]
+      response[0].gsub! "\n", String.space if ignore_newlines
+
+      args.map do |arg|
+
+        response.map! do |fragment|
+          fragment.split arg
+        end
+
+        response.flatten!
+      end
+
+      response
+    end
+
+    def split_english ignore_newlines: false
+      newlines_encountered = self.include?("\n")
+      newlines_ok   = ( not newlines_encountered )
+      newlines_ok ||= ignore_newlines
+
+      message  = "Newlines encountered, but disallowed. "
+      message += \
+      "Set `ignore_newlines` to true to treat as spaces."
+
+      fail message unless newlines_ok
+
+      options = [ ", ",
+                  ", and ",
+                  ", or ",
+                  " and ",
+                  " or "]
+      self.split_via options,
+                     ignore_newlines: ignore_newlines
+    end
+
     def squish!
       self.gsub!(/\A[[:space:]]+/, "")
       self.gsub!(/[[:space:]]+\z/, "")
