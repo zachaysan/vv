@@ -18,6 +18,7 @@ module Readline
   module_function :safe_readline
 
   def prompt message, exit_on_exit: true
+    message.is_a! String
     message.concat " "
 
     input = Readline.safe_readline message
