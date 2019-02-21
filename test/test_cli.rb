@@ -72,4 +72,43 @@ class CLITest < Minitest::Test
     assert printed.starts_with? "usage:"
   end
 
+  def test_parse_message
+    cli = VV::CLI.new
+
+    # to automate testing we mock input
+    expected_output = input = "exit"
+
+    options = "Options:".style :bold, :forestgreen
+    message = "#{options} (S)ave, (r)eset, finish, e(x)it"
+
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+
+    input = "x"
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+
+    expected_output = input = "finish"
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+
+    expected_output = input = "save"
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+
+    input = "s"
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+    input = "S"
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+    input = "SAVE"
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+
+    expected_output = input = "Total Chaos"
+    output = cli.await_input message: message, input: input
+    assert_equal expected_output, output
+  end
+
 end
