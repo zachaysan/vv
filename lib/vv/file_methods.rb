@@ -153,29 +153,35 @@ module VV
       alias_method :move_dir_into, :move_directory_into
       alias_method :mv_dir_into,   :move_directory_into
 
-      def config_home
+      def config_home sub_directory=nil
         path   = ENV['XDG_CACHE_HOME']
-        return path unless path.blank?
         path ||= File.join ENV['HOME'], ".config"
+
+        return path unless sub_directory
+
+        File.join path, sub_directory
       end
       alias_method :xdg_config_home, :config_home
 
       # Where application specific files should be stored
-      def data_home
+      def data_home sub_directory=nil
         path   = ENV['XDG_DATA_HOME']
-        return path unless path.blank?
         path ||= File.join ENV['HOME'], ".local", "share"
+
+        return path unless sub_directory
+
+        File.join path, sub_directory
       end
       alias_method :output_home,   :data_home
       alias_method :xdg_data_home, :data_home
 
       def cache_home sub_directory=nil
-        response   = ENV['XDG_CACHE_HOME']
-        response ||= File.join ENV['HOME'], ".cache"
+        path   = ENV['XDG_CACHE_HOME']
+        path ||= File.join ENV['HOME'], ".cache"
 
-        return response unless sub_directory
+        return path unless sub_directory
 
-        File.join response, sub_directory
+        File.join path, sub_directory
       end
       alias_method :xdg_cache_home, :cache_home
 
@@ -185,6 +191,20 @@ module VV
         path
       end
       alias_method :xdg_cache_home!, :cache_home!
+
+      def config_home! sub_directory
+        path = config_home sub_directory
+        File.make_dir_if_not_exists path
+        path
+      end
+      alias_method :xdg_config_home!, :config_home!
+
+      def data_home! sub_directory
+        path = data_home sub_directory
+        File.make_dir_if_not_exists path
+        path
+      end
+      alias_method :xdg_data_home!, :data_home!
 
       def make_directory_if_not_exists directory
         FileUtils.mkdir_p(directory).first
@@ -207,6 +227,16 @@ module VV
       alias_method :rm_directory, :remove_directory
       alias_method :remove_dir,   :remove_directory
       alias_method :rm_dir,       :remove_directory
+
+      def remove filepath, force: false
+        message = \
+        "Cowardly refusing to remove directory (see `remove_directory`)"
+        fail message if filepath.is_directory_path?
+
+        force ? FileUtils.rm_f(filepath) : FileUtils.rm(filepath)
+      end
+      alias_method :remove_file, :remove
+      alias_method :rm,          :remove
 
     end
 
