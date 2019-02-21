@@ -131,10 +131,19 @@ module VV
     end
 
     def split_via *arguments, ignore_newlines: false
+      newlines_encountered = self.include? String.newline
+      newlines_ok   = ( not newlines_encountered )
+      newlines_ok ||= ignore_newlines
+
+      message  = "Newlines encountered, but disallowed. "
+      message += \
+      "Set `ignore_newlines` to true to treat as spaces."
+
+      fail message unless newlines_ok
+
       args = arguments.flatten.sort_by(&:length).reverse
 
-      response = [self.dup]
-      response[0].gsub! "\n", String.space if ignore_newlines
+      response = [self.gsub(String.newline, String.space)]
 
       args.map do |arg|
 
@@ -149,23 +158,15 @@ module VV
     end
 
     def split_english ignore_newlines: false
-      newlines_encountered = self.include?("\n")
-      newlines_ok   = ( not newlines_encountered )
-      newlines_ok ||= ignore_newlines
-
-      message  = "Newlines encountered, but disallowed. "
-      message += \
-      "Set `ignore_newlines` to true to treat as spaces."
-
-      fail message unless newlines_ok
 
       options = [ ", ",
                   ", and ",
                   ", or ",
                   " and ",
                   " or "]
-      self.split_via options,
-                     ignore_newlines: ignore_newlines
+      self.split_via(options,
+                     ignore_newlines: ignore_newlines)
+        .map(&:strip)
     end
 
     def squish!
@@ -501,6 +502,10 @@ module VV
 
     def tenth
       self[9]
+    end
+
+    def cli_puts **kwargs
+      puts String.get_stdout { self.cli_print( **kwargs ) }
     end
 
     def cli_print width: 80,
