@@ -83,7 +83,10 @@ module VV
                     force_match: false,
                     input: nil
 
-      @prompt_message   = message
+      input   = input
+      input ||= Readline.prompt message
+
+      @prompt_message   = message.unstyled
       @prompt_message ||= ""
 
       response = self.parse_message! input: input
@@ -93,18 +96,21 @@ module VV
       response
     end
 
-    def parse_message! input: nil
-      @prompt_table = LookupTable.new
-      tokens = @prompt_message.split_english
+    def parse_message! input:
+      @prompt_table = LookupTable.new ignore_case: true
+      options = @prompt_message.split(String.colon).last
+      tokens  = options.split_english
+
       tokens.each do |_token|
         token = _token.gsub("(","").gsub(")","")
-        alias_token = token.split("(")[0].split(")")[0]
+        alias_token = _token.split("(")[-1].split(")")[0]
         @prompt_table[token] = true
         @prompt_table.alias key: alias_token, to: token
       end
 
-      input ||= Readline.prompt(@prompt_message)
-      return @prompt_table.lookup_key input
+      response = @prompt_table.lookup_key input
+
+      response || input
     end
 
     def help?
@@ -112,8 +118,17 @@ module VV
       @settings["-h"]
     end
 
+    def version?
+      return false if @settings.nil?
+      @settings["-V"]
+    end
+
     def print_help width: 80
       option_router.help_doc.cli_print width: width
+    end
+
+    def print_version width: 80
+      "#{self.name} version #{@version}".cli_puts
     end
 
   end
