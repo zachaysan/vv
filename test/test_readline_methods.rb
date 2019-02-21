@@ -6,6 +6,13 @@ class ReadlineMethodsTest < Minitest::Test
     assert Readline::vv_enabled?
   end
 
-  # TODO: Implement tests for prompt methods
+  def test_readline_prompt_takes_only_string
+    message = assert_raises(ArgumentError) {
+      Readline.prompt nil
+    }.message
+
+    expected_message = "Expected `String` instance, not `NilClass`."
+    assert_equal expected_message, message
+  end
 
 end
