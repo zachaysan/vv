@@ -38,9 +38,9 @@ module VV
     end
 
     def set_default_paths
-      @config_path ||= File.join File.config_home, name_version
-      @cache_path  ||= File.join File.cache_home,  name_version
-      @data_path   ||= File.join File.data_home,   name_version
+      @config_path ||= File.config_home! name_version
+      @cache_path  ||= File.cache_home!  name_version
+      @data_path   ||= File.data_home!   name_version
     end
 
     def name
