@@ -41,11 +41,11 @@ class LookupTabletest < Minitest::Test
     assert_equal expected_us_aliases, response[:us][:aliases]
   end
 
-  def test_method_delegation_to_hash
+  def test_keys
     lt = LookupTable.new
     lt[:ca] = { population:  37_000_000 }
 
-    refute lt.responds_to? :keys
+    assert lt.responds_to? :keys
 
     expected_keys = [:ca]
     assert_equal expected_keys, lt.keys
