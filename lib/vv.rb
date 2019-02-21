@@ -1,8 +1,9 @@
-require 'securerandom'
-require 'set'
-require 'bigdecimal'
-require 'bigdecimal/util'
-require 'fileutils'
+require "securerandom"
+require "readline"
+require "set"
+require "bigdecimal"
+require "bigdecimal/util"
+require "fileutils"
 
 require_relative "vv/gem_methods"
 require_relative "vv/set_methods"
