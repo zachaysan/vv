@@ -47,4 +47,11 @@ class Object
     fail message
   end
 
+  def is_a! klass
+    message = \
+    "Expected `#{klass}` instance, not `#{self.class}`."
+    fail ArgumentError, message unless self.is_a? klass
+  end
+  alias_method :must_be_a!, :is_a!
+
 end
