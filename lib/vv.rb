@@ -1,3 +1,4 @@
+require "json"
 require "securerandom"
 require "readline"
 require "set"
