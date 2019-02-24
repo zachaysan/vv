@@ -49,6 +49,14 @@ class NilClass
   include VV::NilMethods
 end
 
+class Integer
+  include VV::IntegerMethods
+end
+
+class Float
+  include VV::FloatMethods
+end
+
 class Random
   include VV::RandomMethods
   extend  VV::RandomClassSettings
