@@ -13,12 +13,24 @@ module VV
 
     end
 
+    def symbolize_keys
+      transform_keys{ |key| key.to_sym }
+    end
+
+    def symbolize_keys!
+      transform_keys!{ |key| key.to_sym }
+    end
+
     def stringify_keys
       transform_keys{ |key| key.to_s }
     end
 
     def stringify_keys!
       transform_keys!{ |key| key.to_s }
+    end
+
+    def to_json
+      JSON.dump self
     end
 
     def transform_keys
