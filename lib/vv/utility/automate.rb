@@ -1,4 +1,9 @@
 module VV
+
+  # Automate runs standalone from the rest of the repo, so
+  # the code here intentionally avoids using helpers that
+  # VV adds to ruby classes.
+
   module Automate
 
     def version path:
@@ -55,7 +60,10 @@ module VV
     end
     module_function :version
 
-    def build( name: )
+    def build( name: , argv: nil )
+      simple = %w[ simple force ].include? argv.first
+      return build_simple name: name if simple
+
       puts %x{ find lib/ | \\
          xargs git ls-files --error-unmatch > /dev/null 2>&1 \\
          || ( echo && \\
@@ -70,6 +78,15 @@ module VV
        }
     end
     module_function :build
+
+    def build_simple( name: )
+      puts %x{ rm #{name}-*.gem
+         gem uninstall --ignore-dependencies #{name} > /dev/null
+         gem build --force #{name}.gemspec
+         gem install --force --local $(readlink -f #{name}-*.gem | sort | tail -n 1 ) --pre
+       }
+    end
+    module_function :build_simple
 
     def push( name: )
       puts %x{ TAG_VERSION=$(./bin/version)
