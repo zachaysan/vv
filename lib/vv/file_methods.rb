@@ -211,6 +211,10 @@ module VV
       end
       alias_method :make_dir_if_not_exists,
                    :make_directory_if_not_exists
+      alias_method :create_directory_if_not_exists,
+                   :make_directory_if_not_exists
+      alias_method :create_dir_if_not_exists,
+                   :make_directory_if_not_exists
 
       def make_directory directory
         FileUtils.mkdir(directory).first
