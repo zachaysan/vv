@@ -13,6 +13,13 @@ module VV
 
     end
 
+    # See Float#vv_json.
+    # Intended for common sense json doc generation with reasonable
+    # length, depth, and size limits.
+    def vv_json
+      raise NotImplementedError
+    end
+
     def symbolize_keys
       transform_keys{ |key| key.to_sym }
     end
@@ -27,10 +34,6 @@ module VV
 
     def stringify_keys!
       transform_keys!{ |key| key.to_s }
-    end
-
-    def to_json
-      JSON.dump self
     end
 
     def transform_keys

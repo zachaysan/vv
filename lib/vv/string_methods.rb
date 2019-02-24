@@ -309,10 +309,6 @@ module VV
       raise RuntimeError, message
     end
 
-    def to_json
-      JSON.dump self
-    end
-
     def parse notation: :json
       message = "Only JSON support at this time."
       fail NotImplementedError, message unless notation == :json
