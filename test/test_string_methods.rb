@@ -338,6 +338,30 @@ class StringMethodsTest < Minitest::Test
     assert_equal expected_message, message
   end
 
+  def test_to_json
+    simple = "batman"
+    expected_json = '"batman"'
+    assert_equal expected_json, simple.to_json
+  end
+
+  def test_parse_json_and_to_h
+    json = '"batman"'
+    expected_string = "batman"
+    assert_equal expected_string, json.parse_json
+
+    json = "[1,2,3]"
+    expected_array = [1,2,3]
+    assert_equal expected_array, json.parse( notation: :json )
+
+    json = '{"flag":"CA"}'
+    expected_hash = {"flag" => "CA"}
+    assert_equal expected_hash, json.parse
+    assert_equal expected_hash, json.to_h
+
+    expected_hash = { flag: "CA" }
+    assert_equal expected_hash, json.to_h( symbolize_keys: true )
+  end
+
   def test_readable_to_i
     expected_value = 2000
     assert_equal expected_value, "2k".readable_to_i
