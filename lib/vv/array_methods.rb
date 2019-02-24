@@ -15,6 +15,10 @@ module VV
 
     end
 
+    def to_json
+      JSON.dump self
+    end
+
     def spaced
       self.join(" ")
     end
