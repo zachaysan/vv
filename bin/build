@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require_relative "../lib/vv/utility/automate"
 
-VV::Automate.build name: "vv"
+VV::Automate.build name: "vv", argv: ARGV
