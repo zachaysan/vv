@@ -92,4 +92,24 @@ class HashMethodsTest < Minitest::Test
     assert_equal expected_string.with_newline, printed
   end
 
+  def test_stringify_keys
+    hash = { hero: :batman }
+    expected_hash = { "hero" => :batman }
+    refute_equal hash, hash.stringify_keys
+    refute_equal expected_hash, hash
+    assert_equal expected_hash, hash.stringify_keys
+    hash.stringify_keys!
+    assert_equal expected_hash, hash
+  end
+
+  def test_symbolize_keys
+    hash = { "hero" => "batman" }
+    expected_hash = { hero: "batman" }
+    refute_equal hash, hash.symbolize_keys
+    refute_equal expected_hash, hash
+    assert_equal expected_hash, hash.symbolize_keys
+    hash.symbolize_keys!
+    assert_equal expected_hash, hash
+  end
+
 end
