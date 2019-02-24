@@ -296,10 +296,6 @@ module VV
       raise
     end
 
-    def to_i!
-      Integer(self)
-    end
-
     def to_boolean
       _true = self == "true"
       return true if _true
@@ -311,6 +307,40 @@ module VV
                     only `"true"` and `"false"` can be coerced into
                     boolean. ].spaced
       raise RuntimeError, message
+    end
+
+    def to_json
+      JSON.dump self
+    end
+
+    def parse notation: :json
+      message = "Only JSON support at this time."
+      fail NotImplementedError, message unless notation == :json
+
+      JSON.parse self
+    end
+
+    def parse_json
+      self.parse notation: :json
+    end
+
+    def to_h parse: :json, symbolize_keys: false
+      message = "Only JSON support at this time."
+      fail NotImplementedError, message unless parse == :json
+
+      response = self.parse_json
+
+      response.symbolize_keys! if symbolize_keys
+
+      return response if response.to_h == response
+
+      message = \
+      "Parse string was #{response.class}, instead of Hash."
+      fail message
+    end
+
+    def to_i!
+      Integer(self)
     end
 
     def readable_to_i
