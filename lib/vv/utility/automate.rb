@@ -6,8 +6,8 @@ module VV
 
   module Automate
 
-    def version path:
-      args = ARGV.to_a
+    def version path:, argv:
+      args = argv.to_a
       lines = File.read(path).split("\n")
 
       raise "Unknown number of arguments" if args.size > 1
@@ -36,6 +36,10 @@ module VV
         major, minor, point = command.split(".")
       elsif command == "reset"
         system("git checkout -- #{path}")
+        exit
+      elsif command == "commit"
+        message = "Bump version to #{version}"
+        system("git commit -S --only #{path} -m \"#{message}\"")
         exit
       elsif %w[ help --help h -h ].include? command
         puts
