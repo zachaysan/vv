@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require_relative "../lib/vv/utility/automate"
 
-VV::Automate.version path: "lib/vv/version.rb"
+VV::Automate.version path: "lib/vv/version.rb", argv: ARGV
