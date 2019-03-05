@@ -31,4 +31,21 @@ class IntegerMethodsTest < Minitest::Test
     assert_equal expected_message, message
   end
 
+  def test_readable_number
+    [         3456,         "3456",
+            23_456,       "23,456",
+           230_456,      "230,456",
+         2_230_456,    "2,230,456",
+        22_230_456,   "22,230,456",
+       -22_230_456,  "-22,230,456",
+      -220_230_456, "-220,230,456",
+              -456,         "-456",
+             -4560,        "-4560",
+           -34_560,      "-34,560" ].each_slice(2)
+      .map do | elem |
+      number, expected_readable = elem
+      assert_equal expected_readable, number.readable
+    end
+  end
+
 end
