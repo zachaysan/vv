@@ -42,4 +42,37 @@ class FloatMethodsTest < Minitest::Test
 
   end
 
+  def test_readable_number
+    [           -0.05,           "-0.05",
+                 0.05,            "0.05",
+              3456.05,         "3456.05",
+            23_456.05,       "23,456.05",
+           230_456.05,      "230,456.05",
+         2_230_456.05,    "2,230,456.05",
+        22_230_456.05,   "22,230,456.05",
+       -22_230_456.05,  "-22,230,456.05",
+      -220_230_456.05, "-220,230,456.05",
+              -456.05,         "-456.05",
+             -4560.99,        "-4560.99",
+           -34_560.00,      "-34,560.0" ].each_slice(2)
+      .map do | elem |
+      number, expected_readable = elem
+      assert_equal expected_readable, number.readable
+    end
+
+    number = 0.555555555555
+    expected_readable = "0.556"
+    assert_equal expected_readable, number.readable
+    number = 0.555
+    expected_readable = "0.555"
+    assert_equal expected_readable, number.readable
+    number = -0.555
+    expected_readable = "-0.555"
+    assert_equal expected_readable, number.readable
+    number = -0.5555
+    expected_readable = "-0.5555"
+    assert_equal expected_readable,
+                 number.readable( significant: true )
+  end
+
 end
