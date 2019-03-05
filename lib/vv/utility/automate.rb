@@ -65,6 +65,7 @@ module VV
     module_function :version
 
     def build( name: , argv: nil )
+      argv ||= []
       simple = %w[ simple force ].include? argv.first
       return build_simple name: name if simple
 
