@@ -61,6 +61,10 @@ module VV
         "="
       end
 
+      def comma
+        ","
+      end
+
       def period
         "."
       end
@@ -110,6 +114,16 @@ module VV
     def ends_with? *args
       self.end_with?(*args)
     end
+
+    def shift
+      self.slice!(0)
+    end
+    alias_method :shift!, :shift
+
+    def pop
+      self.slice!(-1)
+    end
+    alias_method :pop!, :pop
 
     def after(string, safe: true)
       if safe && ! self.starts_with?(string)
