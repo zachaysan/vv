@@ -49,6 +49,18 @@ class NilClass
   include VV::NilMethods
 end
 
+class Numeric
+  include VV::NumericMethods
+end
+
+class BigDecimal
+  include VV::DecimalMethods
+end
+
+class Complex
+  include VV::ComplexMethods
+end
+
 class Integer
   include VV::IntegerMethods
 end
