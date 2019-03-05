@@ -49,8 +49,9 @@ module VV
         puts "++  - minor increment"
         puts "+++ - major increment"
         puts
-        puts "x.y.z - to set version explicitly"
-        puts "reset - to revert to version in git"
+        puts "x.y.z  - to set version explicitly"
+        puts "reset  - to revert to version in git"
+        puts "commit - to commit the version change"
         puts
         exit
       end
