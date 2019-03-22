@@ -12,6 +12,11 @@ require_relative "vv/set_methods"
 Gem.require_files "vv/*.rb"
 Gem.require_files "vv/style/*.rb"
 Gem.require_files "vv/utility/*.rb"
+Gem.require_files "vv/serialization/*.rb"
+
+class Object
+  include VV::ObjectMethods
+end
 
 class Symbol
   include VV::SymbolMethods
