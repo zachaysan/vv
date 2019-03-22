@@ -15,6 +15,10 @@ module VV
 
     end
 
+    def vv_json
+      self.to_a.vv_json
+    end
+
     module SetAndArrayMethods
 
       def gravify
@@ -39,7 +43,7 @@ module VV
         ok_type   = other.is_a? Array
         ok_type ||= other.is_a? Set
 
-        fail TypeError, "Expecting array" unless ok_type
+        fail TypeError, "Expecting array or set" unless ok_type
 
         ( self & other ).one?
       end
@@ -56,7 +60,7 @@ module VV
         ok_type   = other.is_a? Array
         ok_type ||= other.is_a? Set
 
-        fail TypeError, "Expecting array" unless ok_type
+        fail TypeError, "Expecting array or set" unless ok_type
         ( self & other ).any?
       end
       alias_method :include_any?, :includes_any?
@@ -67,6 +71,37 @@ module VV
         fail message
       end
       alias_method :include_any!, :includes_any!
+
+      def includes_all? other
+        ok_type   = other.is_a? Array
+        ok_type ||= other.is_a? Set
+
+        fail TypeError, "Expecting array or set" unless ok_type
+        ( other.to_set & self ) == other.to_set
+      end
+      alias_method :include_all?, :includes_all?
+
+      def includes_all! other
+        return true if includes_all? other
+        other = other.to_set
+        remaining = other - ( other & self )
+        count = remaining.count
+
+        message = "Collection "
+        including = remaining.first(3).stringify_collection grave: true
+
+        fail "Assertion error" if count < 1
+
+        if count < 4
+          message += "does not include: #{including}."
+        else
+          message += \
+          "does not include #{count} items, including: #{including}."
+        end
+
+        fail message
+      end
+      alias_method :include_all!, :includes_all!
 
       def stringify_collection grave: false
         return self.gravify.stringify_collection if grave
