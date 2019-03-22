@@ -13,6 +13,10 @@ module VV
 
     end
 
+    def vv_json
+      self.to_json
+    end
+
     def to_boolean
       false
     end

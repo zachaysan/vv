@@ -13,11 +13,8 @@ module VV
 
     end
 
-    # See Float#vv_json.
-    # Intended for common sense json doc generation with reasonable
-    # length, depth, and size limits.
     def vv_json
-      raise NotImplementedError
+      VV::JSON.generate self
     end
 
     def symbolize_keys
