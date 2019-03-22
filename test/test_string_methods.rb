@@ -441,6 +441,16 @@ class StringMethodsTest < Minitest::Test
     assert_equal "@age", "@age".insta
   end
 
+  def test_setter
+    assert_equal "age=", "age".setter
+    assert_equal "age=", "age=".setter
+  end
+
+  def test_setter_sym
+    assert_equal :age=, "age".setter_sym
+    assert_equal :age=, "age=".setter_sym
+  end
+
   def test_to
     assert_equal "ban", "bananas".to(2)
     assert_equal "bananas", "bananas".to(200)
