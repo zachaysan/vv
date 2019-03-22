@@ -40,7 +40,7 @@ module VV
       use_min ||= ( infinite?    and self < 0 )
       return min.to_json if use_min
 
-      JSON.dump(self)
+      ::JSON.dump(self)
     end
 
   end
