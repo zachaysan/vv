@@ -323,11 +323,15 @@ module VV
       raise RuntimeError, message
     end
 
+    def vv_json
+      VV::JSON.generate self
+    end
+
     def parse notation: :json
       message = "Only JSON support at this time."
       fail NotImplementedError, message unless notation == :json
 
-      JSON.parse self
+      ::JSON.parse self
     end
 
     def parse_json
@@ -434,6 +438,15 @@ module VV
 
     def insta_sym
       self.insta.to_sym
+    end
+
+    def setter
+      return self if self.ends_with?(String.equals_sign)
+      "#{self}="
+    end
+
+    def setter_sym
+      self.setter.to_sym
     end
 
     def to position
