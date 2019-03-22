@@ -34,4 +34,16 @@ class SymbolMethodsTest < Minitest::Test
     assert_equal expected_insta_sym, :@dog.insta_sym
   end
 
+  def test_setter
+    expected_setter = "dog="
+    assert_equal expected_setter, :dog.setter
+    assert_equal expected_setter, :dog=.setter
+  end
+
+  def test_setter_sym
+    expected_setter = :dog=
+    assert_equal expected_setter, :dog.setter_sym
+    assert_equal expected_setter, :dog=.setter_sym
+  end
+
 end
