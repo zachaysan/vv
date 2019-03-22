@@ -37,4 +37,31 @@ class ArrayMethodsTest < Minitest::Test
     assert_equal expected_message, message
   end
 
+  def test_set_includes_all?
+    set = Set.new([1,2,3])
+    assert set.includes_all? [2,3]
+    assert set.includes_all? [1,3]
+    assert set.includes_all? [1,3].to_set
+    assert set.includes_all? [1,2,3]
+    assert set.includes_all? [2,3,1]
+    assert set.includes_all? Set.new([2,3,1])
+    refute set.includes_all? [1,2,3,6]
+    refute set.includes_all? [2,4,1]
+    refute set.includes_all? Set.new([0,3,1])
+  end
+
+  def test_set_include_all!
+    set = Set.new([1,2,3])
+    assert set.include_all! [1,3,2]
+    assert set.include_all! Set.new([1,3,2])
+
+    message = assert_raises(RuntimeError) { set.include_all! [8] }.message
+    expected_message = "Collection does not include: `8`."
+    assert_equal expected_message, message
+
+    message = assert_raises(RuntimeError) { set.include_all! [12,8] }.message
+    expected_message = "Collection does not include: `12` and `8`."
+    assert_equal expected_message, message
+  end
+
 end
