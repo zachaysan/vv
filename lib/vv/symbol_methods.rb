@@ -11,12 +11,24 @@ module VV
       end
     end
 
+    def vv_json
+      self.to_s.vv_json
+    end
+
     def insta
       self.to_s.insta
     end
 
     def insta_sym
       self.to_s.insta_sym
+    end
+
+    def setter
+      self.to_s.setter
+    end
+
+    def setter_sym
+      self.to_s.setter_sym
     end
 
     def plural? *args, **kwargs
