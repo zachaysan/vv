@@ -13,6 +13,55 @@ module VV
 
     end
 
+    def vv_json
+      self.to_json
+    end
+
+    def ceil_divide divisor
+      self % divisor > 0 ? ( self / divisor ) + 1 : self / divisor
+    end
+
+    def bits
+      bits_per_byte = 8
+      self.ceil_divide bits_per_byte
+    end
+
+    def kibibytes
+      self * 1024
+    end
+    alias_method :kibibyte, :kibibytes
+    alias_method :KiB,      :kibibytes
+
+    def mebibytes
+      self.kibibytes * 1024
+    end
+    alias_method :mebibyte, :mebibytes
+    alias_method :MiB,      :mebibytes
+
+    def gibibytes
+      self.mebibytes * 1024
+    end
+    alias_method :gibibyte, :gibibytes
+    alias_method :GiB,      :gibibytes
+
+    def tebibytes
+      self.gibibytes * 1024
+    end
+    alias_method :tebibyte, :tebibytes
+    alias_method :TiB,      :tebibytes
+
+    def pebibytes
+      self.tebibytes * 1024
+    end
+    alias_method :pebibyte, :pebibytes
+    alias_method :PiB,      :pebibytes
+
+    def exbibytes
+      self.pebibytes * 1024
+    end
+    alias_method :exbibyte, :exbibytes
+    alias_method :EiB,      :exbibytes
+
     def spaces
       characters String.space
     end
