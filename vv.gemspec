@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = %w( zachaysan@gmail.com )
   spec.summary       = %q{ Make ruby very v }
   spec.homepage      = "https://github.com/zachaysan/vv"
-  spec.license       = "Social Contract License (Alpha)"
+  spec.license       = "Nonstandard"
   spec.files         = `git ls-files -z lib spec`.split("\x0") + %w( README.markdown LICENSE.txt )
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
