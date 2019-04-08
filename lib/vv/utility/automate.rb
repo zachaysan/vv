@@ -13,7 +13,7 @@ module VV
       raise "Unknown number of arguments" if args.size > 1
 
       version_line_index = \
-      lines.find_index { |line| line.starts_with? "  VERSION" }
+      lines.find_index { |line| line.start_with? "  VERSION" }
       version = lines[version_line_index].split(" = ")[-1].gsub("'","")
       if args.size < 1
         puts version
