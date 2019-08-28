@@ -50,7 +50,7 @@ class CLITest < Minitest::Test
     assert_equal expected_data_path, cli.data_path
   end
 
-  def test_help?
+  def test_width_override_and_help?
     cli = VV::CLI.new
     refute cli.help?
     cli.parse_flags "--help"
@@ -68,8 +68,16 @@ class CLITest < Minitest::Test
     cli.parse_flags "-?"
     assert cli.help?
 
-    printed = String.get_stdout { cli.print_help width: 55 }
+    width_override = 55
+    cli.width_override = width_override
+    printed = String.get_stdout { cli.print_help }
+    cli.width_override = nil
     assert printed.starts_with? "usage:"
+
+    assert printed.split( String.newline )
+             .first
+             .unstyled
+             .length < width_override
   end
 
   def test_parse_message
