@@ -50,9 +50,13 @@ module VV
       self
     end
 
-    def cli_print width: 80,
-                  position: 0,
-                  padding: 0
+    def cli_print width: nil,
+                  position: nil,
+                  padding: nil
+
+      width    ||= 80
+      position ||= 0
+      padding  ||= 0
 
       key_padding = nil
 
