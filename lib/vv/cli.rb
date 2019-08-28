@@ -26,7 +26,8 @@ module VV
       @cache_path  = cache_path
       @data_path   = data_path
 
-      @default_width = default_width
+      @default_width  = default_width
+      @width_override = nil
 
       @option_router = OptionRouter.new( name: name ) do |router|
         yield router if block_given?
