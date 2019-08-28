@@ -561,10 +561,14 @@ module VV
       puts String.get_stdout { self.cli_print( **kwargs ) }
     end
 
-    def cli_print width: 80,
-                  padding: 0,
-                  position: 0,
+    def cli_print width: nil,
+                  padding: nil,
+                  position: nil,
                   hard_wrap: false
+
+      width    ||= 80
+      position ||= 0
+      padding  ||= 0
 
       raise NotImplemented if hard_wrap
       raise NotImplemented if self.includes? newline
