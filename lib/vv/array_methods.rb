@@ -63,10 +63,14 @@ module VV
       self[9]
     end
 
-    def cli_print width: 80,
-                  padding: 0,
-                  position: 0,
+    def cli_print width: nil,
+                  padding: nil,
+                  position: nil,
                   separator: nil
+
+      width    ||= 80
+      padding  ||= 0
+      position ||= 0
 
       @cli_print_separator ||= String.space
       separator ||= @cli_print_separator
