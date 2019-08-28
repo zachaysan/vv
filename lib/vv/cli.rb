@@ -2,6 +2,8 @@ module VV
 
   class CLI
 
+    attr_writer :width_override
+
     attr_reader :option_router,
                 :settings,
                 :cache_path,
@@ -14,7 +16,8 @@ module VV
                    argv: nil,
                    config_path: nil,
                    cache_path:  nil,
-                   data_path:   nil
+                   data_path:   nil,
+                   default_width: nil
 
       default_version = "0.0.1"
       @version = version || default_version
@@ -22,6 +25,8 @@ module VV
       @config_path = config_path
       @cache_path  = cache_path
       @data_path   = data_path
+
+      @default_width = default_width
 
       @option_router = OptionRouter.new( name: name ) do |router|
         yield router if block_given?
@@ -123,12 +128,33 @@ module VV
       @settings["-V"]
     end
 
-    def print_help width: 80
-      option_router.help_doc.cli_print width: width
+    def print_help
+      option_router.help_doc.cli_print width: self.width
     end
 
-    def print_version width: 80
-      "#{self.name} version #{@version}".cli_puts
+    def print_version
+      version = "#{self.name} version #{@version}"
+      version.cli_puts width: self.width
+    end
+
+    def show_options options
+      options.each_with_index do | option, index |
+        line = "#{index}) #{option}"
+        even = ( ( index % 2 ) == 0 )
+        line = line.style :wheat if even
+        line = line.style :violet unless even
+        line.cli_puts width: self.width
+      end
+      puts
+    end
+
+    def width
+      @width_override || @default_width
+    end
+
+    def print_error( error, meta: nil )
+      error = error.style :red, :bold
+      error.cli_puts
     end
 
   end
@@ -151,6 +177,11 @@ module VV
       self.set_reserved_commands
 
       yield self if block_given?
+    end
+
+    def lookup flag
+      flag = lookup_canonical_flag flag
+      @parsed_arguments[flag]
     end
 
     def register flags, type: :string
