@@ -13,8 +13,9 @@ module VV
       raise "Unknown number of arguments" if args.size > 1
 
       version_line_index = \
-      lines.find_index { |line| line.start_with? "  VERSION" }
+      lines.find_index { |line| line.lstrip.start_with?("VERSION") }
       version = lines[version_line_index].split(" = ")[-1].gsub("'","")
+      version_padding = lines[version_line_index].split("VERSION")[0]
       if args.size < 1
         puts version
         exit
@@ -60,7 +61,7 @@ module VV
       end
 
       new_version = [major, minor, point].join(".")
-      lines[version_line_index] = "  VERSION = '#{new_version}'"
+      lines[version_line_index] = "#{version_padding}VERSION = '#{new_version}'"
       lines << ""
 
       File.write(path, lines.join("\n"))
