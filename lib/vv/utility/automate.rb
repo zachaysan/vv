@@ -80,6 +80,7 @@ module VV
          || ( echo && \\
               echo "Warning: A file in lib/ is not tracked by git" && \\
               echo )
+         rm -f Gemfile.lock
          rm -f #{name}-*.gem
          gem uninstall --ignore-dependencies --all #{name}
          bundle
