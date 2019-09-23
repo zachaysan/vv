@@ -1,6 +1,12 @@
 require_relative "test_helper.rb"
 
 class HashMethodsTest < Minitest::Test
+
+  def test_includes
+    hash = { foo: true }
+    assert hash.includes?(:foo)
+  end
+
   def test_cli_print
     simple = { "Title"  => "US Sec Def",
                "Serial" => "0569548345" }
