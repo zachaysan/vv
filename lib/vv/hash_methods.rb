@@ -3,6 +3,7 @@ module VV
 
     def self.included(base)
       base.extend(ClassMethods)
+      base.alias_method :includes?, :include?
     end
 
     module ClassMethods
