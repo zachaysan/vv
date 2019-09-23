@@ -2,9 +2,15 @@ module VV
   module StringMethods
 
     def self.included(base)
-      base.extend(ClassMethods)
-      base.extend(SharedInstanceAndClassMethods)
-      base.include(SharedInstanceAndClassMethods)
+      base.instance_eval do
+        extend(ClassMethods)
+        extend(SharedInstanceAndClassMethods)
+        include(SharedInstanceAndClassMethods)
+
+        alias_method :starts_with?, :start_with?
+        alias_method :ends_with?,   :end_with?
+        alias_method :includes?,    :include?
+      end
     end
 
     module ClassMethods
@@ -102,18 +108,6 @@ module VV
     end
 
     # Instance methods start
-
-    def includes? *args
-      self.include?(*args)
-    end
-
-    def starts_with? *args
-      self.start_with?(*args)
-    end
-
-    def ends_with? *args
-      self.end_with?(*args)
-    end
 
     def shift
       self.slice!(0)
@@ -499,6 +493,28 @@ module VV
       raise RuntimeError, message unless non_ambiguous
 
       true
+    end
+
+    def query
+      string_fragments = self.split("#")[0].split("?")
+      message = "Query string contains multiple question marks"
+
+      fail message if string_fragments.count > 2
+      substring = string_fragments[-1]
+      response = {}
+
+      substring.split("&").each do |key_value_pair|
+        key, value = key_value_pair.split(String.equals_sign)
+        if key.ends_with? "[]"
+          _key = key[0..-3]
+          response[_key] ||= Array.new
+          response[_key] << value
+        else
+          response[key] = value
+        end
+      end
+
+      response
     end
 
     def last(limit = 1)
