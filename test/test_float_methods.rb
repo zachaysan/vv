@@ -73,6 +73,10 @@ class FloatMethodsTest < Minitest::Test
     expected_readable = "-0.5555"
     assert_equal expected_readable,
                  number.readable( significant: true )
+
+    number = 234566787654.034569543
+    expected_readable = "234,566,787,654.035"
+    assert_equal expected_readable, number.readable_number
   end
 
 end
