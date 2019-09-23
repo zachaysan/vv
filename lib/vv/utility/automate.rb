@@ -72,6 +72,7 @@ module VV
     def build( name: , argv: nil )
       argv ||= []
       simple = %w[ simple force ].include? argv.first
+      puts "Building..."
       return build_simple name: name if simple
 
       puts %x{ find lib/ | \\
@@ -79,9 +80,8 @@ module VV
          || ( echo && \\
               echo "Warning: A file in lib/ is not tracked by git" && \\
               echo )
-
-         rm #{name}-*.gem
-         gem uninstall --ignore-dependencies #{name} > /dev/null
+         rm -f #{name}-*.gem
+         gem uninstall --ignore-dependencies --all #{name}
          bundle
          gem build #{name}.gemspec
          gem install $(readlink -f #{name}-*.gem | sort | tail -n 1 ) --pre
