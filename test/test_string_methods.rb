@@ -572,6 +572,28 @@ class StringMethodsTest < Minitest::Test
     assert_equal expected_message, message
   end
 
+  def test_query
+    uri = "zachaysan.com/?foo=bar&baz=lol"
+    query = uri.query
+    expected_query = {"foo"=>"bar", "baz"=>"lol"}
+    assert_equal expected_query, query
+
+    uri = "?foo=bar&baz=lol"
+    query = uri.query
+    assert_equal expected_query, query
+
+    uri = "foo=bar&baz=lol"
+    query = uri.query
+    assert_equal expected_query, query
+  end
+
+  def test_query_with_array
+    uri = "zachaysan.com/?foo[]=bar&foo[]=baz&lol=yes"
+    query = uri.query
+    expected_query = {"foo"=>["bar", "baz"], "lol"=>"yes"}
+    assert_equal expected_query, query
+  end
+
   def test_last
     expected_character = "e"
     assert_equal expected_character, "nevermore".last
