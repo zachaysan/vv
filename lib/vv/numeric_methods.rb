@@ -56,9 +56,8 @@ module VV
       if significant || precision >= _remaining_digits.size
         dec_portion = _remaining_digits
       else
-        dec_portion = \
-        ( _remaining_digits[0..last_digit].to_f / 10 )
-        .round.to_s
+        rounded = self.real.to_f.round(precision)
+        dec_portion = rounded.to_s.split(".")[-1][0..last_digit]
       end
 
       response + dec_portion
