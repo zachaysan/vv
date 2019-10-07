@@ -332,6 +332,18 @@ module VV
       self.parse notation: :json
     end
 
+    def to_time
+      # Must be of the form 2019-02-21T19:42:06.23456Z
+
+      message = "Incorrect time string formatting #{self}"
+      fail message unless self.ends_with? "Z"
+      fail message unless self.split(String.dash).count == 3
+      fail message unless self.split(String.colon).count == 3
+      fail message unless self[10] == "T"
+
+      Time.parse self
+    end
+
     def to_h parse: :json, symbolize_keys: false
       message = "Only JSON support at this time."
       fail NotImplementedError, message unless parse == :json
