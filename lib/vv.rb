@@ -1,3 +1,4 @@
+require "time"
 require "json"
 require "securerandom"
 require "readline"
@@ -77,4 +78,8 @@ end
 class Random
   include VV::RandomMethods
   extend  VV::RandomClassSettings
+end
+
+class Time
+  include VV::TimeMethods
 end
