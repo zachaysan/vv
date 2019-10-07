@@ -333,9 +333,9 @@ module VV
     end
 
     def to_time
-      # Must be of the form 2019-02-21T19:42:06.23456Z
+      message = "Incorrect time string formatting `#{self}`, " + \
+                "must be of the form `2020-02-20T11:22:33.4567Z`"
 
-      message = "Incorrect time string formatting #{self}"
       fail message unless self.ends_with? "Z"
       fail message unless self.split(String.dash).count == 3
       fail message unless self.split(String.colon).count == 3
