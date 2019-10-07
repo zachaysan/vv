@@ -344,6 +344,27 @@ class StringMethodsTest < Minitest::Test
     assert_equal expected_json, simple.to_json
   end
 
+  def test_to_time
+    time = "2019-02-21T19:42:06.23456Z".to_time
+
+    expected_year = 2019
+    expected_month = 2
+    expected_day = 21
+
+    assert_equal expected_year,  time.year
+    assert_equal expected_month, time.month
+    assert_equal expected_day,   time.day
+
+    expected_hour = 19
+    expected_minute = 42
+    expected_second = 6
+
+    assert_equal expected_hour, time.hour
+    assert_equal expected_month, time.month
+    assert_equal expected_second, time.sec
+    assert_equal expected_second, time.second
+  end
+
   def test_parse_json_and_to_h
     json = '"batman"'
     expected_string = "batman"
